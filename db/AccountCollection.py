@@ -1,5 +1,5 @@
 from pymongo.collection import Collection
-import DbHandler
+from db.DbHandler import DbHandler
 
 class AccountCollection(DbHandler):
 
