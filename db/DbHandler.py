@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from pymongo.database import Database
 from pymongo.collection import Collection
+from bson.objectid import ObjectId
 from constants import MONGODB_CONN_STRING, DB
 
 class DbHandler:
@@ -11,3 +12,7 @@ class DbHandler:
     
     def find_record(self, collection: Collection, query: dict) -> dict:
         return collection.find_one(query)
+    
+    def insert_record(self, collection: Collection, record: dict) -> ObjectId:
+        result = collection.insert_one(record)
+        return result.inserted_id

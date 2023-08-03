@@ -1,6 +1,8 @@
 import telebot
+from datetime import datetime
 from constants import BOT_TOKEN
 from db.AccountCollection import AccountCollection
+from db.TransactionCollection import TransactionCollection
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -23,9 +25,20 @@ def get_chat_id(message):
 # handle message with that can be a float or number
 @bot.message_handler(
         func=lambda message: (message.text.isdigit() or message.text.replace('.', '', 1).isdigit())
-        and is_account_a_client(message.chat.id))
+        and is_account_a_client(message.chat.id)
+)
 def handle_number(message):
-    bot.reply_to(message, "You sent a number")
+    transaction = TransactionCollection()
+    
+    utc_time = datetime.utcnow()
+    
+    record = {
+        "chat_id": message.chat.id,
+        "amount": float(message.text),
+        "timestamp": utc_time
+    }
+    transaction.insert_transaction(record)
+    bot.reply_to(message, "saving transaction...")
 
 if __name__ == '__main__':
     bot.infinity_polling()
